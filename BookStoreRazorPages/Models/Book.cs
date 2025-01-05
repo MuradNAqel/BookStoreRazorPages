@@ -7,11 +7,15 @@ namespace BookStoreRazorPages.Models
     public class Book : BaseEntityAudit
     {
         [MinLength(3)]
-        public string Title { get; set; }
-        [MinLength(3)]
+        [MaxLength(100)]
         public string Description { get; set; }
-        [Range(0.01, 500, ErrorMessage = "Price must be between 0.01 and 500.")]
+
+        [Range(1, 500, ErrorMessage = "Price must be between 1 and 500.")]
+        [Column(TypeName = "decimal(6,2)")]
         public decimal Price { get; set; }
+
+        [MaxLength(20)]
+        public string Category { get; set; }
 
         //Navigation properties A Book can have many authors and Atmost one photo(for now).
         public List<Author> Authors { get; set; }

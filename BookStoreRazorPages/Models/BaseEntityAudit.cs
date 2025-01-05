@@ -1,10 +1,14 @@
-﻿namespace BookStoreRazorPages.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BookStoreRazorPages.Models
 {
     public abstract class BaseEntityAudit : BaseEntity
     {
         public DateTime CreatedAt { get; set; }
-        public int CreatedBy { get; set; }
-        public int EditedBy { get; set; }
+        [MaxLength(65)]
+        public string CreatedBy { get; set; }
+        [MaxLength(65)]
+        public string EditedBy { get; set; }
         public bool IsSoftDeleted { get; set; }
     }
 }
