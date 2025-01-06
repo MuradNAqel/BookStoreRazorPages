@@ -24,12 +24,23 @@ namespace BookStoreRazorPages.Application.Entities
 
         public Book(string name, string description, string category, decimal price, List<Author> authors)
         {
+            CreatedAt = DateTime.UtcNow;
+            CreatedBy = string.Join(", ", Authors.Select(author => author.Name)) ?? "Not registered";
+
             SetName(name);
             SetDescription(description);
             SetCategory(category);
             SetPrice(price);
             SetAuthors(authors);
+        }
 
+        public void AddPhoto(Photo photo)
+        {
+            if (photo == null)
+            {
+                throw new ArgumentNullException(nameof(photo));
+            }
+            Photos.Add(photo);
         }
 
         public void SetAuthors(List<Author> authors)

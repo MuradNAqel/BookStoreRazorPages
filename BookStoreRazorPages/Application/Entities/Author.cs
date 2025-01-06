@@ -18,7 +18,7 @@ namespace BookStoreRazorPages.Application.Entities
         public List<Book> Books { get; set; }
 
 
-        public Author(string name, DateTime dateOfBirth, string biography, Nationality nationality, string speciality, Photo photo)
+        public Author(string name, DateTime dateOfBirth, string biography, Nationality nationality, string speciality)
         {
             CreatedAt = DateTime.UtcNow;
             CreatedBy = name;

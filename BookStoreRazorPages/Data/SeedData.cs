@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-
+﻿using BookStoreRazorPages.Application.Entities;
+using Microsoft.EntityFrameworkCore;
 namespace BookStoreRazorPages.Data;
 
 public static class SeedData
@@ -20,30 +20,30 @@ public static class SeedData
                 return;
             }
 
-            //context.Book.AddRange(
-            //    new Book
-            //    {
-            //        Authors = {
-            //            new Author(
-            //                  name: "Qais",
-            //                  dateOfBirth: DateTime.Today.AddYears(-32),
-            //                  biography:"A good long journey of creating",
-            //                  nationality: Nationality.Palestenian,
-            //                  speciality: "Thriller Codeing Novels",
-            //                  photo: new Photo()
-            //                )
-            //        },
-            //        Id = 1,
-            //        CreatedAt = DateTime.UtcNow,
-            //        CreatedBy = "Author Name",
-            //        EditedBy = "Not Edited",
-            //        IsSoftDeleted = false,
-            //        Category = "Science fiction",
-            //        Name = "Book Name",
-            //        Description = "Some description on the book",
-            //        Photo = new Photo { },
-            //        Price = 10,
-            //    });
+            context.Book.AddRange(
+                new Book
+                (
+                    name: "Coding Miracles",
+                    description: "All included zero to hero supervan",
+                    category: "Programming",
+                    price: 19,
+                    authors: [
+                        new Author(
+                              name: "Qais",
+                              dateOfBirth: DateTime.Today.AddYears(-32),
+                              biography:"A good long journey of creating",
+                              nationality: Nationality.Palestenian,
+                              speciality: "Thriller Codeing Novels"
+                            )
+                    ]
+                ));
+            context.Book.FirstOrDefault().AddPhoto(
+                new Photo(
+                    path: "path to image",
+                    fileExtension: "png",
+                    size: 87000
+                ));
+            context.SaveChanges();
         }
     }
 }
