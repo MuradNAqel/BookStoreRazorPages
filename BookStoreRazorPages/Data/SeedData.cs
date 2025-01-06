@@ -26,22 +26,21 @@ public static class SeedData
                     name: "Coding Miracles",
                     description: "All included zero to hero supervan",
                     category: "Programming",
-                    price: 19,
-                    authors: [
-                        new Author(
-                              name: "Qais",
-                              dateOfBirth: DateTime.Today.AddYears(-32),
-                              biography:"A good long journey of creating",
-                              nationality: Nationality.Palestenian,
-                              speciality: "Thriller Codeing Novels"
-                            )
-                    ]
+                    price: 19
                 ));
             context.Book.FirstOrDefault().AddPhoto(
                 new Photo(
                     path: "path to image",
                     fileExtension: "png",
                     size: 87000
+                ));
+            context.Book.FirstOrDefault().AddAuthor(
+                new Author(
+                    name: "Qais",
+                    dateOfBirth: DateTime.Today.AddYears(-32),
+                    biography: "A good long journey of creating",
+                    nationality: Nationality.Palestenian,
+                    speciality: "Thriller Codeing Novels"
                 ));
             context.SaveChanges();
         }
