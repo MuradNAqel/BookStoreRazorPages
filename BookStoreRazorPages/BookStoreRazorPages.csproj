@@ -15,4 +15,11 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\IService\" />
+    <Folder Include="Application\Dtos\" />
+    <Folder Include="Application\Service\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>

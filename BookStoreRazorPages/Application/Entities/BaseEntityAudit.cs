@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BookStoreRazorPages.Models
+namespace BookStoreRazorPages.Application.Entities
 {
     public abstract class BaseEntityAudit : BaseEntity
     {

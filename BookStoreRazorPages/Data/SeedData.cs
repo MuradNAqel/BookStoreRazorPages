@@ -1,5 +1,4 @@
-﻿using BookStoreRazorPages.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace BookStoreRazorPages.Data;
 
@@ -21,34 +20,30 @@ public static class SeedData
                 return;
             }
 
-            context.Book.AddRange(
-                new Book
-                {
-                    Authors = {
-                        new Author
-                        {
-                            Age = 32,
-                            CreatedAt = DateTime.UtcNow,
-                            CreatedBy = "Author Name",
-                            EditedBy = "Not Edited",
-                            Id = 1,
-                            IsSoftDeleted = false,
-                            Name = "Author Name",
-                            Books = { },
-                            Speciality = "Novels"
-                        }
-                    },
-                    Id = 1,
-                    CreatedAt = DateTime.UtcNow,
-                    CreatedBy = "Author Name",
-                    EditedBy = "Not Edited",
-                    IsSoftDeleted = false,
-                    Category = "Science fiction",
-                    Name = "Book Name",
-                    Description = "Some description on the book",
-                    Photo = new Photo { },
-                    Price = 10,
-                });
+            //context.Book.AddRange(
+            //    new Book
+            //    {
+            //        Authors = {
+            //            new Author(
+            //                  name: "Qais",
+            //                  dateOfBirth: DateTime.Today.AddYears(-32),
+            //                  biography:"A good long journey of creating",
+            //                  nationality: Nationality.Palestenian,
+            //                  speciality: "Thriller Codeing Novels",
+            //                  photo: new Photo()
+            //                )
+            //        },
+            //        Id = 1,
+            //        CreatedAt = DateTime.UtcNow,
+            //        CreatedBy = "Author Name",
+            //        EditedBy = "Not Edited",
+            //        IsSoftDeleted = false,
+            //        Category = "Science fiction",
+            //        Name = "Book Name",
+            //        Description = "Some description on the book",
+            //        Photo = new Photo { },
+            //        Price = 10,
+            //    });
         }
     }
 }
