@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BookStoreRazorPages.Application.Dtos.AuthorDtos;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookStoreRazorPages.Application.Entities
 {
@@ -27,6 +28,20 @@ namespace BookStoreRazorPages.Application.Entities
             SetBiography(biography);
             SetNationality(nationality);
             SetDateOfBirth(dateOfBirth);
+        }
+
+        public AuthorDto MapToAuthorDto()
+        {
+            return new AuthorDto
+            {
+                ImagePath = ImagePath,
+                Biography = Biography,
+                DateOfBirth = DateOfBirth,
+                Nationality = Nationality,
+                Speciality = Speciality,
+                Name = Name,
+                Id = Id,
+            };
         }
 
         public void SetImagePath(string imagePath)

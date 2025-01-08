@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookStoreRazorPages.Data;
 
-public class BookContext : DbContext
+public class AppDbContext : DbContext
 {
 
-    public BookContext(DbContextOptions<BookContext> options) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
 

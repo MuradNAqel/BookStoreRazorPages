@@ -6,8 +6,8 @@ public static class SeedData
 {
     public static void Initialize(IServiceProvider serviceProvider)
     {
-        using (var context = new BookContext(
-            serviceProvider.GetRequiredService<DbContextOptions<BookContext>>()))
+        using (var context = new AppDbContext(
+            serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>()))
         {
             //Check if existant
             if (context == null || context.Book == null)

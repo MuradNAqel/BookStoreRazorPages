@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookStoreRazorPages.Migrations
 {
-    [DbContext(typeof(BookContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20250106135349_DatabaseRestructure")]
     partial class DatabaseRestructure
     {

@@ -7,9 +7,9 @@ namespace BookStoreRazorPages.Application.Service
 {
     public class BookService : IBookServices
     {
-        private readonly BookContext _context;
+        private readonly AppDbContext _context;
 
-        public BookService(BookContext context)
+        public BookService(AppDbContext context)
         {
             _context = context;
         }
