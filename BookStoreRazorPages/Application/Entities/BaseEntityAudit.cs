@@ -8,7 +8,7 @@ namespace BookStoreRazorPages.Application.Entities
         [MaxLength(65)]
         public string CreatedBy { get; set; }
         [MaxLength(65)]
-        public string EditedBy { get; set; }
-        public bool IsSoftDeleted { get; set; }
+        public string EditedBy { get; set; } = "Not Edited";
+        public bool IsSoftDeleted { get; set; } = false;
     }
 }

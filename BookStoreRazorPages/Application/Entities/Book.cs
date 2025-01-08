@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BookStoreRazorPages.Application.Dtos.BookDtos;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookStoreRazorPages.Application.Entities
@@ -22,15 +23,33 @@ namespace BookStoreRazorPages.Application.Entities
         public List<Author> Authors { get; set; }
         public List<Photo> Photos { get; set; }
 
+        public Book() { }
+
         public Book(string name, string description, string category, decimal price)
         {
             CreatedAt = DateTime.UtcNow;
-            CreatedBy = string.Join(", ", Authors.Select(author => author.Name)) ?? "Not registered";
+            CreatedBy = Authors?.Any() == true
+                        ? string.Join(", ", Authors
+                                        .Where(author => !string.IsNullOrEmpty(author.Name))
+                                        .Select(author => author.Name))
+                        : "Not registered";
 
             SetName(name);
             SetDescription(description);
             SetCategory(category);
             SetPrice(price);
+        }
+
+        public BookDto MapToBookDto()
+        {
+            return new BookDto
+            {
+                Name = Name,
+                Category = Category,
+                Description = Description,
+                Price = Price,
+                Id = Id
+            };
         }
 
         public void AddPhoto(Photo photo)

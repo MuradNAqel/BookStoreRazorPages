@@ -16,9 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Dtos\BookDtos\" />
-    <Folder Include="Application\IService\" />
-    <Folder Include="Application\Service\" />
     <Folder Include="Services\" />
   </ItemGroup>
 

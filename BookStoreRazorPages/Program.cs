@@ -1,3 +1,5 @@
+using BookStoreRazorPages.Application.IService;
+using BookStoreRazorPages.Application.Service;
 using BookStoreRazorPages.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<BookContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IBookServices, BookService>();
 
 var app = builder.Build();
 
