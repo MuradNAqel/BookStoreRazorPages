@@ -1,5 +1,4 @@
-﻿using BookStoreRazorPages.Application.Dtos.AuthorDtos;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BookStoreRazorPages.Application.Entities
 {
@@ -28,20 +27,7 @@ namespace BookStoreRazorPages.Application.Entities
             SetBiography(biography);
             SetNationality(nationality);
             SetDateOfBirth(dateOfBirth);
-        }
-
-        public AuthorDto MapToAuthorDto()
-        {
-            return new AuthorDto
-            {
-                ImagePath = ImagePath,
-                Biography = Biography,
-                DateOfBirth = DateOfBirth,
-                Nationality = Nationality,
-                Speciality = Speciality,
-                Name = Name,
-                Id = Id,
-            };
+            SetSpeciality(speciality);
         }
 
         public void SetImagePath(string imagePath)
@@ -73,7 +59,7 @@ namespace BookStoreRazorPages.Application.Entities
 
         public void SetBiography(string biography)
         {
-            if (biography.Length > 50)
+            if (biography.Length > 200)
             {
                 throw new ArgumentException("Biography should be less than 200 characters.", nameof(biography));
             }
@@ -82,7 +68,7 @@ namespace BookStoreRazorPages.Application.Entities
 
         public void SetDateOfBirth(DateTime dateOfBirth)
         {
-            if (dateOfBirth.Year < 1940)
+            if (dateOfBirth.Year < 1700)
             {
                 throw new ArgumentException("Date of birth can't be more than 100 years, 1940 and above allowed.", nameof(dateOfBirth));
             }

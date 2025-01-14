@@ -8,6 +8,7 @@ namespace BookStoreRazorPages.Application.Dtos.BookDtos
         public decimal Price { get; set; }
         public string Category { get; set; } //for now 
         public string Name { get; set; }
+        public List<int> Authors { get; set; }
 
         public Book MapToBook()
         {
@@ -25,6 +26,7 @@ namespace BookStoreRazorPages.Application.Dtos.BookDtos
                 description: Description,
                 category: Category,
                 price: Price
+            //authors: Authors.Select(a => a.MapToAuthor()).ToList()
             );
         }
     }

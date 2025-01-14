@@ -17,11 +17,12 @@ namespace BookStoreRazorPages.Application.Entities
         public int BookId { get; set; }
         //public Book Book { get; set; }
 
-        public Photo(string path, string fileExtension, decimal size)
+        public Photo(string path, string fileExtension, decimal size, int id)
         {
             SetFileExtension(fileExtension);
             SetPath(path);
             SetSize(size);
+            BookId = id;
         }
 
         string[] AllowedExtensions = { "jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff" };

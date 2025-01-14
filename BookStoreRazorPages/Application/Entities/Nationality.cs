@@ -23,6 +23,8 @@
         Spanish,
         Swedish,
         Turkish,
-        Egyptian
+        Egyptian,
+        Irish,
+        Colombian
     }
 }

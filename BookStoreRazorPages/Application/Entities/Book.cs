@@ -1,5 +1,4 @@
-﻿using BookStoreRazorPages.Application.Dtos.BookDtos;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookStoreRazorPages.Application.Entities
@@ -20,10 +19,26 @@ namespace BookStoreRazorPages.Application.Entities
 
         //Navigation properties A Book can have many authors and Atmost one photo(for now).
 
-        public List<Author> Authors { get; set; }
-        public List<Photo> Photos { get; set; }
+        public List<Author> Authors { get; protected set; }
+        public List<Photo> Photos { get; protected set; }
 
         public Book() { }
+
+        public Book(string name, string description, string category, decimal price, List<Author> authors)
+        {
+            CreatedAt = DateTime.UtcNow;
+            CreatedBy = Authors?.Any() == true
+                        ? string.Join(", ", Authors
+                                        .Where(author => !string.IsNullOrEmpty(author.Name))
+                                        .Select(author => author.Name))
+                        : "Not registered";
+
+            SetName(name);
+            SetDescription(description);
+            SetCategory(category);
+            SetPrice(price);
+            SetAuthors(authors);
+        }
 
         public Book(string name, string description, string category, decimal price)
         {
@@ -38,31 +53,30 @@ namespace BookStoreRazorPages.Application.Entities
             SetDescription(description);
             SetCategory(category);
             SetPrice(price);
+
         }
 
-        public BookDto MapToBookDto()
+        public void SetPhotos(List<Photo> photos)
         {
-            return new BookDto
+            if (photos.Count < 1)
             {
-                Name = Name,
-                Category = Category,
-                Description = Description,
-                Price = Price,
-                Id = Id
-            };
+                throw new ArgumentException("Book must have an author", nameof(photos));
+            }
+            Photos = photos;
         }
 
         public void AddPhoto(Photo photo)
         {
             if (photo == null)
             {
-                throw new ArgumentNullException(nameof(photo));
+                throw new ArgumentException("Book must have an author", nameof(photo));
             }
             Photos.Add(photo);
         }
 
-        public void SetAuthors(List<Author> authors)
+        public async void SetAuthors(List<Author> authors)
         {
+            //check if authors are changed or not :: to avoid duplicate rows in DB
             if (authors.Count == 0)
             {
                 throw new ArgumentException("Book must have an author", nameof(authors));

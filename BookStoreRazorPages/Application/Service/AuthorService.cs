@@ -9,6 +9,7 @@ namespace BookStoreRazorPages.Application.Service
     public class AuthorService : IAuthorService
     {
         private readonly AppDbContext _context;
+        private static AuthorDto _authorDto = new AuthorDto();
 
         public AuthorService(AppDbContext context)
         {
@@ -21,7 +22,7 @@ namespace BookStoreRazorPages.Application.Service
 
             await _context.Author.AddAsync(author);
 
-            return author.MapToAuthorDto();
+            return _authorDto.MapToAuthorDto(author);
         }
 
         public async Task<AuthorDto> Delete(int id)
@@ -32,16 +33,31 @@ namespace BookStoreRazorPages.Application.Service
 
             await _context.SaveChangesAsync();
 
-            return author.MapToAuthorDto();
+            return _authorDto.MapToAuthorDto(author);
+        }
+
+        public async Task<AuthorDto> Get(int id)
+        {
+            var author = await _context.Author.FindAsync(id);
+
+            return _authorDto.MapToAuthorDto(author);
+        }
+
+        public async Task<Author> GetObj(int id)
+        {
+            var author = await _context.Author.SingleOrDefaultAsync(a => a.Id == id);
+
+            return author;
         }
 
         public async Task<List<AuthorDto>> GetAll()
         {
-            List<Author> authors = await _context.Author.Where(a => !a.IsSoftDeleted).ToListAsync();
+            List<Author> authors = _context.Author.Where(a => !a.IsSoftDeleted).ToList();
 
-            List<AuthorDto> authorsDto = authors.Select(a => a.MapToAuthorDto()).ToList();
+            List<AuthorDto> authorsDto = authors.Select(author => _authorDto.MapToAuthorDto(author)).ToList();
 
             return authorsDto;
+
         }
 
         public async Task<AuthorDto> Update(int id, EditAuthorDto editAuthorDto)
@@ -59,7 +75,7 @@ namespace BookStoreRazorPages.Application.Service
             author.SetNationality(editAuthorDto.Nationality);
             author.SetSpeciality(editAuthorDto.Speciality);
 
-            return author.MapToAuthorDto();
+            return _authorDto.MapToAuthorDto(author);
 
         }
     }
