@@ -39,6 +39,22 @@ namespace BookStoreRazorPages.Application.Entities
             SetPrice(price);
             SetAuthors(authors);
         }
+        public Book(string name, string description, string category, decimal price, List<Author> authors, List<Photo> photos)
+        {
+            CreatedAt = DateTime.UtcNow;
+            CreatedBy = Authors?.Any() == true
+                        ? string.Join(", ", Authors
+                                        .Where(author => !string.IsNullOrEmpty(author.Name))
+                                        .Select(author => author.Name))
+                        : "Not registered";
+
+            SetName(name);
+            SetDescription(description);
+            SetCategory(category);
+            SetPrice(price);
+            SetAuthors(authors);
+            SetPhotos(photos);
+        }
 
         public Book(string name, string description, string category, decimal price)
         {
@@ -60,7 +76,7 @@ namespace BookStoreRazorPages.Application.Entities
         {
             if (photos.Count < 1)
             {
-                throw new ArgumentException("Book must have an author", nameof(photos));
+                throw new ArgumentException("Book have no images yet.", nameof(photos));
             }
             Photos = photos;
         }
@@ -69,7 +85,7 @@ namespace BookStoreRazorPages.Application.Entities
         {
             if (photo == null)
             {
-                throw new ArgumentException("Book must have an author", nameof(photo));
+                throw new ArgumentException("photo obj in null", nameof(photo));
             }
             Photos.Add(photo);
         }

@@ -17,15 +17,30 @@ namespace BookStoreRazorPages.Application.Entities
         public int BookId { get; set; }
         //public Book Book { get; set; }
 
-        public Photo(string path, string fileExtension, decimal size, int id)
+        public Photo() { }
+        public Photo(string path, string fileExtension, decimal size, int Bookid)
         {
-            SetFileExtension(fileExtension);
-            SetPath(path);
-            SetSize(size);
-            BookId = id;
+            //SetFileExtension(fileExtension);
+            //SetPath(path);
+            //SetSize(size);
+            Path = path;
+            FileExtension = fileExtension;
+            Size = size;
+            BookId = Bookid;
         }
 
-        string[] AllowedExtensions = { "jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff" };
+        public Photo(string name, string path, string fileExtension, decimal size)
+        {
+            //SetFileExtension(fileExtension);
+            //SetPath(path);
+            //SetSize(size);
+            Name = name;
+            Path = path;
+            FileExtension = fileExtension;
+            Size = size;
+        }
+
+        // string[] AllowedExtensions = { "jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff" };
 
         public void SetPath(string path)
         {
@@ -38,18 +53,18 @@ namespace BookStoreRazorPages.Application.Entities
 
 
 
-        public void SetFileExtension(string fileExtension)
-        {
-            if (!AllowedExtensions.Contains(fileExtension.ToLower()))
-            {
-                throw new ArgumentException("AllowedExtensions = { \"jpg\", \"jpeg\", \"png\", \"gif\", \"bmp\", \"webp\", \"tiff\" }", nameof(fileExtension));
-            }
-            FileExtension = fileExtension;
-        }
+        //public void SetFileExtension(string fileExtension)
+        //{
+        //    if (!AllowedExtensions.Contains(fileExtension.ToLower()))
+        //    {
+        //        throw new ArgumentException("AllowedExtensions = { \"jpg\", \"jpeg\", \"png\", \"gif\", \"bmp\", \"webp\", \"tiff\" }", nameof(fileExtension));
+        //    }
+        //    FileExtension = fileExtension;
+        //}
 
         public void SetSize(decimal size)
         {
-            if (size > 2000000)
+            if (size > 16000000) //16000000Bit 2MB
             {
                 throw new ArgumentException("size exceeded 2MB", nameof(size));
             }

@@ -1,4 +1,5 @@
-﻿using BookStoreRazorPages.Application.Entities;
+﻿using BookStoreRazorPages.Application.Dtos.PhotoDtos;
+using BookStoreRazorPages.Application.Entities;
 
 namespace BookStoreRazorPages.Application.Dtos.BookDtos
 {
@@ -9,7 +10,7 @@ namespace BookStoreRazorPages.Application.Dtos.BookDtos
         public string Category { get; set; } //for now 
         public string Name { get; set; }
         public List<int> Authors { get; set; }
-        public List<Photo> Photos { get; set; }
+        public List<CreatePhotoDto> Photos { get; set; }
 
         public Book MapToBook()
         {

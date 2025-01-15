@@ -59,7 +59,7 @@
             </div>
             <div class="modal-body">
                 <!-- Modal Form -->
-                <form id="bookForm">
+                <form id="bookForm" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="bookName" class="form-label">Book Name</label>
                         <input type="text" class="form-control" id="bookName" asp-for="VM.Name" required>
@@ -88,6 +88,17 @@
                                 }
                             }
                         </select>
+                    </div>
+                    <div>
+                        <dl>
+                            <dt>
+                                <label asp-for="VM.FormFiles"></label>
+                            </dt>
+                            <dd>
+                                <input asp-for="VM.FormFiles" type="file"/>
+                                <span asp-validation-for="VM.FormFiles"></span>
+                            </dd>
+                        </dl>
                     </div>
                     <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
                 </form>
@@ -148,18 +159,24 @@
     $(document).ready(function () {
         $('#bookForm').on('submit', function (event) {
             event.preventDefault(); // Prevent default form submission
-
-            var formData = $(this).serialize();
+            console.log('Form submitted');
+            //var formData = $(this).serialize();
+                    // Create a FormData object
+            var formData = new FormData(this);
             
             $.ajax({
                 url: '@Url.Page("Index")',
                 type: 'POST',
                 data: formData, 
+                processData: false, // Do not process data as a query string
+                contentType: false, // Let the browser set the correct Content-Type
                 headers: {
                     RequestVerificationToken:
                         document.getElementById("RequestVerificationToken").value
                 },
                 success: function (response) {
+                    console.log('Form submitted successfully returned response');
+                    console.log(response);
                     if (response.success) {
 
                         alert(response.message || "Book created successfully!");
@@ -167,6 +184,7 @@
                         $('.modal-backdrop').remove(); // Remove black opacity blur
 
                             if (response.data) {
+                                console.log('Form submitted successfully if response.data ');
         var bookId = response.data.result.id;
         //show data by consle log  result
         // Create a new row
@@ -203,6 +221,7 @@
                     }
                 },
                 error: function (xhr) {
+                    console.log('Form failed submitting returned an error occured');
                     alert("An error occurred: " + xhr.responseText);
                 }
             }

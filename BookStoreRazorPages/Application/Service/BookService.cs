@@ -2,6 +2,7 @@
 using BookStoreRazorPages.Application.Entities;
 using BookStoreRazorPages.Application.IService;
 using BookStoreRazorPages.Data;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStoreRazorPages.Application.Service
@@ -11,19 +12,22 @@ namespace BookStoreRazorPages.Application.Service
         private static BookDto bookDto = new BookDto();
         private readonly AppDbContext _context;
         private readonly IAuthorService _authorService;
-        public BookService(AppDbContext context, IAuthorService authorService)
+        private readonly IPhotoService _photoService;
+
+        public BookService(AppDbContext context, IAuthorService authorService, IPhotoService photoService)
         {
             _context = context;
             _authorService = authorService;
+            _photoService = photoService;
         }
 
-        public async Task<BookDto> Create(CreateBookDto createBookDto)
+        public async Task<BookDto> Create(CreateBookDto createBookDto, ModelStateDictionary modelState)
         {
             try
             {
                 Book book = createBookDto.MapToBook();
-                var listAuthers = new List<Author>();
 
+                var listAuthers = new List<Author>();
                 foreach (var id in createBookDto.Authors)
                 {
                     var auth = await _authorService.GetObj(id);
@@ -33,12 +37,18 @@ namespace BookStoreRazorPages.Application.Service
 
                 book.SetAuthors(listAuthers);
 
+
                 List<Photo> photos = new List<Photo>();
-                foreach (var photoDto in createBookDto.Photos)
+                foreach (var file in createBookDto.Photos)
                 {
+                    var photoDto = await _photoService.Upload(file.FormFile, modelState);
                     photos.Add(
-                            new Photo(photoDto.Path, photoDto.FileExtension, photoDto.Size, photoDto.Id)
-                        );
+                            new Photo(
+                                photoDto.Name,
+                                photoDto.Path,
+                                photoDto.FileExtension,
+                                photoDto.Size
+                                ));
                 }
 
                 book.SetPhotos(photos);

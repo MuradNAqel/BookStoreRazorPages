@@ -1,5 +1,6 @@
 using BookStoreRazorPages.Application.Dtos.AuthorDtos;
 using BookStoreRazorPages.Application.Dtos.BookDtos;
+using BookStoreRazorPages.Application.Dtos.PhotoDtos;
 using BookStoreRazorPages.Application.IService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,11 +11,12 @@ public class IndexModel : PageModel
 {
     private readonly IBookServices _bookService;
     private readonly IAuthorService _authorService;
-
-    public IndexModel(IBookServices bookServices, IAuthorService authorService)
+    private readonly IPhotoService _photoService;
+    public IndexModel(IBookServices bookServices, IAuthorService authorService, IPhotoService photoService)
     {
         _bookService = bookServices;
         _authorService = authorService;
+        _photoService = photoService;
     }
 
     [BindProperty]
@@ -25,6 +27,8 @@ public class IndexModel : PageModel
     public List<BookDto> Book { get; set; }
     [BindProperty]
     public List<AuthorDto> Author { get; set; }
+    //[BindProperty]
+    //public BufferedMultipleFileUploadPhysical FileUpload { get; set; }
 
     public async void OnGet()
     {
@@ -43,7 +47,7 @@ public class IndexModel : PageModel
         }
 
         // Map IndexVM to CreateBookDto
-        CreateBookDto cbDto = new CreateBookDto
+        CreateBookDto cBookDto = new CreateBookDto
         {
             Name = VM.Name,
             Description = VM.Description,
@@ -52,8 +56,22 @@ public class IndexModel : PageModel
             Authors = VM.Authors
         };
 
+        //stor image 
+        // info image that you need to send in object => photoDto 
+        List<CreatePhotoDto> cPhotoDto = new List<CreatePhotoDto>();
+        foreach (var file in VM.FormFiles)
+        {
+            CreatePhotoDto photoDto = new CreatePhotoDto
+            {
+                FormFile = file
+            };
+            cPhotoDto.Add(photoDto);
+        }
+
+        cBookDto.Photos = cPhotoDto;
         // Call the service to create the book
-        var book = _bookService.Create(cbDto);
+
+        var book = _bookService.Create(cBookDto, ModelState);
 
 
         if (book == null)
@@ -64,6 +82,7 @@ public class IndexModel : PageModel
 
         return new JsonResult(new { success = true, message = "Book created successfully!", data = book });
     }
+    //create photo service
 
     [Route("Books/Edit/{id}")]
     public async Task<IActionResult> OnPostEdit(int id)
@@ -105,6 +124,29 @@ public class IndexModel : PageModel
         return new JsonResult(new { success = true, message = "Book deleted successfully!" });
     }
 
+    //public async Task<IActionResult> OnPostUploadAsync()
+    //{
+    //    if (!ModelState.IsValid)
+    //    {
+    //        return new JsonResult(new { success = false, message = "Invalid data received" });
+    //    }
+
+    //    //Inject service Photo
+    //    //MAp VM to dto 
+    //    foreach (var photo in FileUpload.FormFiles)
+    //    {
+    //        PhotoDto photoDto = new PhotoDto
+    //        {
+
+    //        };
+    //    }
+
+    //    // _photoService.Upload(photoDto);
+
+
+    //    return RedirectToPage("./Index");
+    //}
+
     public class IndexVM
     {
         public string Description { get; set; }
@@ -113,5 +155,17 @@ public class IndexModel : PageModel
         public string Name { get; set; }
         //public int Id { get; set; }
         public List<int>? Authors { get; set; }
+        //public List<PhotoDto> Photos { get; set; }
+        public List<IFormFile>? FormFiles { get; set; }
+
     }
+
+    //public class BufferedMultipleFileUploadPhysical
+    //{
+    //    [Required]
+    //    [Display(Name = "File")]
+    //    public List<IFormFile> FormFiles { get; set; }
+    //    //public int BookId { get; set; }
+    //    //link when the book is created in the book Service
+    //}
 }
