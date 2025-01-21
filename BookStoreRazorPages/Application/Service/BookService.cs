@@ -65,8 +65,6 @@ namespace BookStoreRazorPages.Application.Service
 
         }
 
-
-
         public async Task<BookDto> Delete(int id)
         {
             try
@@ -91,6 +89,7 @@ namespace BookStoreRazorPages.Application.Service
         {
             List<Book> books = _context.Book.Where(b => b.IsSoftDeleted == false)
                 .Include(book => book.Authors)
+                .Include(p => p.Photos)
                 .ToList();
 
             List<BookDto> booksDto = books.Select(bookDto.MapToBookDto).ToList();
@@ -105,13 +104,14 @@ namespace BookStoreRazorPages.Application.Service
             return bookDto.MapToBookDto(book);
         }
 
-        public async Task<BookDto> Update(int id, EditBookDto editBookDto)
+        public async Task<BookDto> Update(int id, EditBookDto editBookDto, ModelStateDictionary modelState)
         {
             try
             {
                 var entity = await _context.Book
                     .Where(b => b.Id == id)
                     .Include(b => b.Authors) // Include related authors
+                    .Include(b => b.Photos) // Include related Photoes
                     .FirstOrDefaultAsync(); // Get the specific book or null if not found
 
                 if (entity == null)
@@ -123,7 +123,30 @@ namespace BookStoreRazorPages.Application.Service
                 entity.SetDescription(editBookDto.Description);
                 entity.SetPrice(editBookDto.Price);
                 entity.SetCategory(editBookDto.Category);
+                //Set New Photos
+                if (editBookDto.EditPhotoDto.NewPhotos != null)
+                {
+                    List<Photo> photos = new List<Photo>();
+                    if (editBookDto.EditPhotoDto.NewPhotos != null)
+                    {
+                        foreach (var file in editBookDto.EditPhotoDto.NewPhotos)
+                        {
+                            var photoDto = await _photoService.Upload(file, modelState);
+                            photos.Add(
+                                    new Photo(
+                                        photoDto.Name,
+                                        photoDto.Path,
+                                        photoDto.FileExtension,
+                                        photoDto.Size
+                                        ));
+                        }
+                    }
 
+                    if (photos != null || photos.Count > 1)
+                    {
+                        entity.SetPhotos(photos);
+                    }
+                }
                 // Retrieve the original existing authors as a list
                 var existingAuthors = entity.Authors.ToList();
                 var newAuthors = new List<Author>();

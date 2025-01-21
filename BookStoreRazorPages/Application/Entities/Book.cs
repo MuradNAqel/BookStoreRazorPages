@@ -76,7 +76,7 @@ namespace BookStoreRazorPages.Application.Entities
         {
             if (photos.Count < 1)
             {
-                throw new ArgumentException("Book have no images yet.", nameof(photos));
+                throw new ArgumentException("Cannot append an empty photos list.", nameof(photos));
             }
             Photos = photos;
         }

@@ -1,73 +1,82 @@
 ﻿using BookStoreRazorPages.Application.Dtos.PhotoDtos;
 using BookStoreRazorPages.Application.IService;
-using BookStoreRazorPages.Application.Utilities;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BookStoreRazorPages.Application.Service
 {
     public class PhotoService : IPhotoService
     {
-        private readonly long _fileSizeLimit = 4000000;
+        private readonly long _fileSizeLimit = 4 * 1024 * 1024; // 4 MB
         private readonly string[] _permittedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".tiff" };
-        private readonly string _targetFilePath = "C:\\Users\\User\\source\\repos\\BookStoreRazorPages\\BookStoreRazorPages\\wwwroot\\assets\\images\\";
+        private readonly string _targetFolder = "assets/images";
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public async Task<PhotoDto> Upload(IFormFile FormFile, ModelStateDictionary modelState)
+        public PhotoService(IWebHostEnvironment webHostEnvironment)
         {
-            var fileExtension = Path.GetExtension(FormFile.FileName).ToLowerInvariant();
+            _webHostEnvironment = webHostEnvironment;
+        }
+
+        public async Task<PhotoDto> Upload(IFormFile formFile, ModelStateDictionary modelState)
+        {
+            if (formFile == null || formFile.Length == 0)
+            {
+                modelState.AddModelError("File", "The file is empty.");
+                return new PhotoDto();
+            }
+
+            var fileExtension = Path.GetExtension(formFile.FileName).ToLowerInvariant();
             if (!_permittedExtensions.Contains(fileExtension))
             {
                 modelState.AddModelError("File", "Invalid file extension.");
                 return new PhotoDto();
             }
-            if (FormFile.Length > _fileSizeLimit)
+
+            if (formFile.Length > _fileSizeLimit)
             {
                 modelState.AddModelError("File", $"File size exceeds {_fileSizeLimit / (1024 * 1024)} MB.");
                 return new PhotoDto();
             }
 
-            var formFileContent =
-                await FileHelpers.ProcessFormFile<PhotoDto>(
-                    FormFile, modelState, _permittedExtensions,
-                    _fileSizeLimit);
+            string wwwrootPath = _webHostEnvironment.WebRootPath;
 
-            if (!modelState.IsValid)
+            if (string.IsNullOrWhiteSpace(wwwrootPath))
             {
-                //msg = "Please correct the form.";
-
+                modelState.AddModelError("File", "Server configuration error: 'wwwroot' directory not found.");
                 return new PhotoDto();
             }
 
-            // For the file name of the uploaded file stored
-            // server-side, use Path.GetRandomFileName to generate a safe
-            // random file name.
-            var trustedFileNameForFileStorage = FormFile.FileName;
-            var filePath = Path.Combine(
-                _targetFilePath, trustedFileNameForFileStorage);
+            // Generate a unique file name
+            var uniqueFileName = $"{Path.GetFileNameWithoutExtension(formFile.FileName)}_{Guid.NewGuid()}{fileExtension}";
+            var targetFilePath = Path.Combine(wwwrootPath, _targetFolder, uniqueFileName);
 
-            // **WARNING!**
-            // In the following example, the file is saved without
-            // scanning the file's contents. In most production
-            // scenarios, an anti-virus/anti-malware scanner API
-            // is used on the file before making the file available
-            // for download or for use by other systems. 
-            // For more information, see the topic that accompanies 
-            // this sample.
-
-            using (var fileStream = File.Create(filePath))
+            try
             {
-                await fileStream.WriteAsync(formFileContent);
+                // Ensure the target folder exists
+                var targetDirectory = Path.Combine(wwwrootPath, _targetFolder);
+                if (!Directory.Exists(targetDirectory))
+                {
+                    Directory.CreateDirectory(targetDirectory);
+                }
 
+                // Save the file to the target path
+                using (var fileStream = new FileStream(targetFilePath, FileMode.Create))
+                {
+                    await formFile.CopyToAsync(fileStream);
+                }
+
+                // Return the file details
                 return new PhotoDto
                 {
-                    Name = FormFile.FileName,
+                    Name = formFile.FileName,
                     FileExtension = fileExtension,
-                    Path = filePath,
-                    Size = formFileContent.Length,
+                    Path = $"/{_targetFolder}/{uniqueFileName}".Replace("\\", "/"), // Relative path for client usage
+                    Size = formFile.Length,
                 };
-
-                // To work directly with a FormFile, use the following
-                // instead:
-                //await FileUpload.FormFile.CopyToAsync(fileStream);
+            }
+            catch (Exception ex)
+            {
+                modelState.AddModelError("File", $"An error occurred while saving the file: {ex.Message}");
+                return new PhotoDto();
             }
         }
     }

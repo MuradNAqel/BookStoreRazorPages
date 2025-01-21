@@ -21,8 +21,8 @@ public class IndexModel : PageModel
 
     [BindProperty]
     public IndexVM VM { get; set; }
-    //[BindProperty]
-    //public EditBookDto editBookVM { get; set; }
+    [BindProperty]
+    public EditPhotoVM editPhotoVM { get; set; }
     [BindProperty]
     public List<BookDto> Book { get; set; }
     [BindProperty]
@@ -71,7 +71,7 @@ public class IndexModel : PageModel
         cBookDto.Photos = cPhotoDto;
         // Call the service to create the book
 
-        var book = _bookService.Create(cBookDto, ModelState);
+        var book = await _bookService.Create(cBookDto, ModelState);
 
 
         if (book == null)
@@ -87,13 +87,20 @@ public class IndexModel : PageModel
     [Route("Books/Edit/{id}")]
     public async Task<IActionResult> OnPostEdit(int id)
     {
+
+        EditPhotoDto editPhotoDto = new EditPhotoDto
+        {
+            NewPhotos = editPhotoVM.NewPhotos,
+        };
+
         EditBookDto editDto = new EditBookDto
         {
             Name = VM.Name,
             Description = VM.Description,
             Category = VM.Category,
             Price = VM.Price,
-            Authors = VM.Authors
+            Authors = VM.Authors,
+            EditPhotoDto = editPhotoDto
         };
 
         if (!ModelState.IsValid)
@@ -101,7 +108,7 @@ public class IndexModel : PageModel
             return new JsonResult(new { success = false, message = "Invalid data received" });
         }
 
-        var result = await _bookService.Update(id, editDto);
+        var result = await _bookService.Update(id, editDto, ModelState);
 
         if (result == null)
         {
@@ -159,7 +166,10 @@ public class IndexModel : PageModel
         public List<IFormFile>? FormFiles { get; set; }
 
     }
-
+    public class EditPhotoVM
+    {
+        public List<IFormFile>? NewPhotos { get; set; } // For replacing the photo
+    }
     //public class BufferedMultipleFileUploadPhysical
     //{
     //    [Required]

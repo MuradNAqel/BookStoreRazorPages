@@ -7,7 +7,7 @@ namespace BookStoreRazorPages.Application.Entities
 
         public string Path { get; set; }
 
-        [Column(TypeName = "VarChar(4)")]
+        [Column(TypeName = "VarChar(6)")]
         public string FileExtension { get; set; }
 
         [Column(TypeName = "decimal(10,2)")] //use MB
