@@ -34,16 +34,18 @@ public class IndexModel : PageModel
     {
         Book = await _bookService.GetAll();
         Author = await _authorService.GetAll();
-
-
-
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
         {
-            return new JsonResult(new { success = false, message = "Invalid data received" });
+            var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+
+            return new JsonResult(new { success = false, message = "Invalid data received", errors });
         }
 
         // Map IndexVM to CreateBookDto
@@ -160,9 +162,9 @@ public class IndexModel : PageModel
         public decimal Price { get; set; }
         public string Category { get; set; } //for now 
         public string Name { get; set; }
-        //public int Id { get; set; }
+
         public List<int>? Authors { get; set; }
-        //public List<PhotoDto> Photos { get; set; }
+
         public List<IFormFile>? FormFiles { get; set; }
 
     }

@@ -1,0 +1,60 @@
+﻿@model BookStoreRazorPages.Pages.Books.IndexModel
+
+<!-- Edit Book Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Book</h5>
+                <button id="closeEditModalBtn" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editBookForm" method="post" enctype="multipart/form-data">
+                    <input type="hidden" id="editBookId">
+                    <div class="mb-3">
+                        <label for="editBookName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editBookName" asp-for="VM.Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBookDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editBookDescription" rows="3" asp-for="VM.Description"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBookCategory" class="form-label">Category</label>
+                        <input type="text" class="form-control" id="editBookCategory" asp-for="VM.Category" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBookPrice" class="form-label">Price</label>
+                        <input type="number" class="form-control" id="editBookPrice" step="0.1" asp-for="VM.Price" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editBookAuthors">Author</label>
+                        <select class="form-control" id="editBookAuthors" asp-for="VM.Authors" multiple>
+                            <option value="">-- Select an Author --</option>
+                            @if (Model.Author != null && Model.Author.Count > 0)
+                            {
+                                @foreach (var author in Model.Author)
+                                {
+                                    <option value="@author.Id">@author.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <dl>
+                            <dt>
+                                <label for="editBookFiles"></label>
+                            </dt>
+                            <dd>
+                                <input id="editBookFiles" asp-for="editPhotoVM.NewPhotos" type="file" multiple />
+                            </dd>
+                        </dl>
+                    </div>
+                    <div id="currentBookPhotos">
+                    </div>
+                    <button type="submit" id="EditSaveBtn" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -21,4 +21,8 @@
     <Folder Include="wwwroot\assets\images\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\js\Book.js" />
+  </ItemGroup>
+
 </Project>
