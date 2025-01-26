@@ -28,7 +28,7 @@
                 </tr>
             </thead>
             <tbody id="bookTable">
-                @foreach (var book in Model.Book)
+                @foreach (var book in Model.Books)
                 {
                     <tr data-id="@book.Id">
                         <td class="book-name">@book.Name</td>
@@ -53,7 +53,18 @@
             </tbody>
         </table>
     </div>
-    <a class="page-link" href="#">Next</a>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" id="previous" href="#">Previous</a></li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item">
+                    <a class="page-link" id="pageId" data-page="@i" data-totalNumOfPages="@Model.TotalPages" href="#">@i</a>
+                </li>
+            }
+            <li class="page-item"><a class="page-link" id="next" href="#">Next</a></li>
+        </ul>
+    </nav>
     <partial name="_AddBookModalPartial.cshtml" for="@Model">
     <partial name="_EditBookModalPartial.cshtml" for="@Model">
     <script src="~/js/book.js"></script>

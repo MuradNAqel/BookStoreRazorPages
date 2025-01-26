@@ -1,6 +1,7 @@
 var indexUrl;
 
 $(document).ready(function () {
+
     // Remove focus from the AddNewBook button on closing the Modal
     // this fixes a aria-hidden focus error
     $(document).on("click", "#closeCreateModalBtn", function () {
@@ -42,8 +43,6 @@ $(document).ready(function () {
             url: indexUrl,
             type: "POST",
             data: formData,
-            processData: false,
-            contentType: false,
             headers: {
                 RequestVerificationToken: $("#RequestVerificationToken").val(),
             },
@@ -223,4 +222,94 @@ $(document).ready(function () {
             });
         }
     });
+
+    getAll();
+
+
+    $(document).on("click", ".page-link", function (e) {
+        e.preventDefault();
+        const page = $(this).data("page");
+        const totalPages = $(this).data("totalNumOfPages");
+        console.log("page num: " + page);
+
+        if (this.id === "pageId") {
+            console.log("true this.id === pageId go to getAll");
+            getAll(page, "");
+        } else if (this.id === "previous") {
+            // Handle "Previous" button
+            const currentPage = parseInt($(".page-item.active .page-link").data("page"));
+            if (currentPage > 1) {
+                getAll(currentPage - 1, "");
+            }
+        } else if (this.id === "next") {
+            // Handle "Next" button
+            const currentPage = parseInt($(".page-item.active .page-link").data("page"));
+
+            if (currentPage < totalPages) {
+                getAll(currentPage + 1, "");
+            }
+        }
+    });
+    $.ajaxSetup({ cache: false });
+
+    function getAll(page, searchText) {
+        console.log("page is " + page + "inside getAll");
+        const params = new URLSearchParams();
+        params.append("handler", "AllBooks");
+        params.append("page", page || 1);
+        params.append("searchText", searchText || "");
+        $.ajax({
+            //url: indexUrl + '?handler=AllBooks&page=' + page + '&searchText=' + searchText,
+            url: indexUrl + "?" + params.toString(),
+            type: "GET",
+            //data: { page: page, searchText: searchText },
+            processData: false,
+            contentType: false,
+            headers: {
+                RequestVerificationToken: $("#RequestVerificationToken").val(),
+            },
+            success: function (response) {
+                if (response.success) {
+                    console.log(response);
+
+                    if (response.data && response.data.books) {
+                        $("#bookTable").empty();
+                        response.data.books.forEach((book) => {
+                            const authorsNames = Array.isArray(book.authors)
+                                ? book.authors.map((author) => author.name).join(", ")
+                                : "No authors";
+
+                            const photosHTML = Array.isArray(book.photos)
+                                ? book.photos.map((photo) => `<img src="${photo.path}" alt="Book Photo" class="mr-3" style="max-width:50px" />`).join("")
+                                : "No photos";
+
+                            const bookRow = `
+                        <tr data-id="${book.id}">
+                        <td class="book-name">${book.name}</td>
+                        <td class="book-description">${book.description}</td>
+                        <td class="book-category">${book.category}</td>
+                        <td class="book-price">${book.price}</td>
+                        <td class="book-authors">${authorsNames}</td>
+                        <td class="book-photos">${photosHTML}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning btn-edit" data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
+                            <button class="btn btn-sm btn-danger btn-delete">Delete</button>
+                        </td>
+                        </tr>`;
+                            $("#bookTable").append(bookRow);
+                        });
+                    }
+
+                } else {
+                    alert(
+                        response.message || "An error occurred while fetching the books.",
+                    );
+                }
+            },
+            error: function (xhr) {
+                alert("An error occurred: " + xhr.responseText);
+            },
+        });
+    }
+
 });

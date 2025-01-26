@@ -85,11 +85,14 @@ namespace BookStoreRazorPages.Application.Service
             }
         }
         // returns null on async await  connection started but...
-        public Task<List<BookDto>> GetAll()
+        public Task<List<BookDto>> GetAll(int page, string searchText)
         {
-            List<Book> books = _context.Book.Where(b => b.IsSoftDeleted == false)
+            List<Book> books = _context.Book
+                .Where(b => !b.IsSoftDeleted && b.Name.Contains(searchText ?? ""))
                 .Include(book => book.Authors)
                 .Include(p => p.Photos)
+                .Skip(page * 10)
+                .Take(10)
                 .ToList();
 
             List<BookDto> booksDto = books.Select(bookDto.MapToBookDto).ToList();
@@ -191,6 +194,13 @@ namespace BookStoreRazorPages.Application.Service
             {
                 throw new Exception("An error occured editing the book", ex);
             }
+        }
+
+        public async Task<int> GetCount()
+        {
+            return await _context.Book
+            .AsNoTracking()
+            .CountAsync(b => b.IsSoftDeleted == false);
         }
 
         //public async Task<ResponseDto<CreateBookDto>> Create(CreateBookDto createBookDto)

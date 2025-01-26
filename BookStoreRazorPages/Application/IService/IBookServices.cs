@@ -8,7 +8,8 @@ namespace BookStoreRazorPages.Application.IService
         public Task<BookDto> Create(CreateBookDto createBookDto, ModelStateDictionary modelState);
         public Task<BookDto> Update(int id, EditBookDto editBookDto, ModelStateDictionary modelState);
         public Task<BookDto> Delete(int id);
-        public Task<List<BookDto>> GetAll();
+        public Task<List<BookDto>> GetAll(int page, string searchText);
         public Task<BookDto> Get(int id);
+        public Task<int> GetCount();
     }
 }

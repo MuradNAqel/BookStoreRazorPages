@@ -31,9 +31,9 @@
                         <label for="editBookAuthors">Author</label>
                         <select class="form-control" id="editBookAuthors" asp-for="VM.Authors" multiple>
                             <option value="">-- Select an Author --</option>
-                            @if (Model.Author != null && Model.Author.Count > 0)
+                            @if (Model.Authors != null && Model.Authors.Count > 0)
                             {
-                                @foreach (var author in Model.Author)
+                                @foreach (var author in Model.Authors)
                                 {
                                     <option value="@author.Id">@author.Name</option>
                                 }

@@ -24,18 +24,57 @@ public class IndexModel : PageModel
     [BindProperty]
     public EditPhotoVM editPhotoVM { get; set; }
     [BindProperty]
-    public List<BookDto> Book { get; set; }
+    public List<BookDto> Books { get; set; }
     [BindProperty]
-    public List<AuthorDto> Author { get; set; }
-    //[BindProperty]
-    //public BufferedMultipleFileUploadPhysical FileUpload { get; set; }
-
-    public async void OnGet()
+    public List<AuthorDto> Authors { get; set; }
+    [BindProperty]
+    public string SearchText { get; set; }
+    public int TotalPages { get; set; } = 1;
+    public int Page { get; set; } = 1;
+    public async Task OnGet()
     {
-        Book = await _bookService.GetAll();
-        Author = await _authorService.GetAll();
+        var NumOfBooks = await _bookService.GetCount();
+        TotalPages = NumOfBooks > 0
+            ? (int)Math.Ceiling((double)NumOfBooks / 10)
+            : 1;
+
+        Books = await _bookService.GetAll(Page, "");
+
+        Authors = await _authorService.GetAll();
     }
 
+    public async Task<IActionResult> OnGetAllBooks([FromQuery] int page, [FromQuery] string searchText)
+    {
+        var NumOfBooks = await _bookService.GetCount();
+        TotalPages = NumOfBooks > 0
+            ? (int)Math.Ceiling((double)NumOfBooks / 10)
+            : 1;
+        Console.WriteLine("Before assign");
+        Console.WriteLine($"page: {page.ToString()}, searchText: {searchText}");
+        Console.WriteLine($"Page: {Page.ToString()}, SearchText: {SearchText}");
+
+        Page = page;
+        SearchText = searchText;
+
+        Console.WriteLine("After assign");
+        Console.WriteLine($"page: {page.ToString()}, searchText: {searchText}");
+        Console.WriteLine($"Page: {Page.ToString()}, SearchText: {SearchText}");
+
+        Books = await _bookService.GetAll(Page, SearchText);
+        Authors = await _authorService.GetAll();
+
+        return new JsonResult(new
+        {
+            success = true,
+            message = "Books fetched successfully!",
+            data = new
+            {
+                books = Books,
+                totalPages = TotalPages
+            }
+        });
+
+    }
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
